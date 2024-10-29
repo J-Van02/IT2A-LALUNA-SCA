@@ -13,30 +13,31 @@ public class Assistance {
     public void addStudent() {
         Scanner sc = new Scanner(System.in);
         config co = new config();
-  
       
+        sc.nextLine();
         System.out.println("Student Applicant First Name: ");
-        String fname = sc.next();
+        String fname = sc.nextLine();
         System.out.println("Student Applicant Last Name: ");
-        String lname = sc.next();
+        String lname = sc.nextLine();
 
         System.out.println("Student Applicant Email: ");
-        String email = sc.next();
+        String email =sc.nextLine();
         System.out.println("Student Applicant Status: ");
-        String status = sc.next();
-
+        String status = sc.nextLine();
+        System.out.println("Student Year Level: ");
+        String yr = sc.nextLine();
         
        
-        String sql = "INSERT INTO Student (s_fname, s_lname, s_email, s_status )"
-                + "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Student (s_fname, s_lname, s_email, school_stat, yr_level)"
+                + "VALUES (?, ?, ?, ?, ?)";
 
-        co.addRecord(sql, fname, lname, email, status); 
+        co.addRecord(sql, fname, lname, email, status, yr); 
     }
 
     private void viewStudents() {
         String studentsQuery = "SELECT * FROM Student";
-        String[] studentsHeaders = {"ID", "First Name", "Last Name", "Email", "Status"};
-        String[] studentsColumns = {"s_id", "s_fname", "s_lname", "s_email", "s_status"}; 
+        String[] studentsHeaders = {"ID", "First Name", "Last Name", "Email", "School Status", "Year Level"};
+        String[] studentsColumns = {"s_id", "s_fname", "s_lname", "s_email", "school_stat", "yr_level"}; 
 
         config co = new config();
         co.viewRecords(studentsQuery, studentsHeaders, studentsColumns);
@@ -66,7 +67,7 @@ public class Assistance {
         System.out.println("Enter new Status: ");
         String status = sc.next();
 
-        String sqlUpdate = "UPDATE Student SET s_fname = ?, s_lname = ?, s_email = ?, s_status = ? WHERE s_id = ?"; 
+        String sqlUpdate = "UPDATE Student SET s_fname = ?, s_lname = ?, s_email = ?, school_stat = ? WHERE s_id = ?"; 
         co.updateRecord(sqlUpdate, fname, lname, email, status, studentId);
     }
 
