@@ -39,7 +39,7 @@ public class Application {
         String sql = "INSERT INTO Student (s_fname, s_lname, s_db, s_gen, s_status, s_add, s_email, s_cn, s_pce, s_yrl, s_gfname, s_glname, s_gcn)"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        co.addRecord(sql, fname, lname, db, gen, add, email, cn, pce, yrl, status, gfname, glname, gcn); 
+        co.addRecord(sql, fname, lname, db, gen, status, add, email, cn, pce, yrl, gfname, glname, gcn); 
     }
     
     public void Apply(){
@@ -48,12 +48,28 @@ public class Application {
         Application ap = new Application();
         AssistanceProgran asp = new AssistanceProgran();
         
+        System.out.println("\n------ STUDENT INFORMATION ------");
         ap.viewForm();
         System.out.print("Select Student ID: ");
         int id = sc.nextInt();
+        
+        while((con.getSingleValue("SELECT s_id FROM Student WHERE s_id = ?", id)) == 0){
+        System.out.println("Selected ID doesn't exist!");
+        System.out.print("Enter Student ID again: ");
+        id = sc.nextInt();
+    }
+        
+        System.out.println("\n----- LIST OF PROGRAM -----");
         asp.viewProg();
         System.out.print("Select Program ID: ");
         int id2 = sc.nextInt();
+        
+        while((con.getSingleValue("SELECT adprog_id FROM ass_prog WHERE adprog_id = ?", id2)) == 0){
+        System.out.println("Selected ID doesn't exist!");
+        System.out.print("Enter Program ID again: ");
+        id = sc.nextInt();
+    }
+        
         sc.nextLine();
         System.out.print("Enter Application Date (mm/dd/yy): ");
         String ad = sc.nextLine();
@@ -66,7 +82,7 @@ public class Application {
     
     public void viewForm() {
     String studentsQuery = "SELECT * FROM Student";
-    String[] studentsHeaders = {"ID", "First Name", "Last Name", "Birth Date", "Gender", "Address", "Status", "Email", "Contact Number", "Program/Course Enrolled", "Year Level"};
+    String[] studentsHeaders = {"Student ID", "First Name", "Last Name", "Birth Date", "Gender", "Status", "Address", "Email", "Contact Numer", "Program Enrolled", "Year Level"};
     String[] studentsColumns = {"s_id", "s_fname", "s_lname", "s_db", "s_gen", "s_status", "s_add", "s_email", "s_cn", "s_pce", "s_yrl"};
     
     config co = new config();
@@ -76,7 +92,7 @@ public class Application {
     public void viewApply() {
     String studentsQuery = "SELECT * FROM application";
     String[] studentsHeaders = {"Application ID", "Student ID", "Application Date", "Status"};
-    String[] studentsColumns = {"ap_id", "s_id", "ap_dare", "ap_Status"};
+    String[] studentsColumns = {"ap_id", "s_id", "ap_date", "ap_Status"};
     
     config co = new config();
     co.viewRecords(studentsQuery, studentsHeaders, studentsColumns);
@@ -96,7 +112,14 @@ public class Application {
         config co = new config();
         
         System.out.print("Enter Student Applicant ID to update: ");
-        int studentId = sc.nextInt();
+        int id = sc.nextInt();
+        
+        while((co.getSingleValue("SELECT s_id FROM Student WHERE s_id = ?", id)) == 0){
+        System.out.println("Selected ID doesn't exist!");
+        System.out.print("Enter Student ID again: ");
+        id = sc.nextInt();
+    }
+        
         sc.nextLine();
         System.out.print("Enter new Address: ");
         String add = sc.nextLine();
@@ -122,10 +145,16 @@ public class Application {
         config co = new config();
         
         System.out.print("Enter Student ID to delete: ");
-        int studentId = sc.nextInt();
+        int id = sc.nextInt();
+        
+        while((co.getSingleValue("SELECT s_id FROM Student WHERE s_id = ?", id)) == 0){
+        System.out.println("Selected ID doesn't exist!");
+        System.out.print("Enter Student ID again: ");
+        id = sc.nextInt();
+    }
 
         String sqlDelete = "DELETE FROM Student WHERE s_id = ?"; 
-        co.deleteRecord(sqlDelete, studentId);
+        co.deleteRecord(sqlDelete, id);
     }
     
         public void deleteApply() {
@@ -135,6 +164,12 @@ public class Application {
         System.out.print("Enter Application ID to delete: ");
         int id = sc.nextInt();
 
+        while((co.getSingleValue("SELECT ap_id FROM appliucation WHERE ap_id = ?", id)) == 0){
+        System.out.println("Selected ID doesn't exist!");
+        System.out.print("Enter Application ID again: ");
+        id = sc.nextInt();
+    }
+        
         String sqlDelete = "DELETE FROM application WHERE ap_id = ?"; 
         co.deleteRecord(sqlDelete, id);
     }
@@ -165,9 +200,6 @@ public class Application {
                     break;
                     
                 case 2:
-                    AssistanceProgran asp = new AssistanceProgran();
-                    System.out.println("\n ---- Program List ------");
-                    asp.assProg();
                     ap.Apply();
                     break;
                     
@@ -197,6 +229,7 @@ public class Application {
                     ap.viewGurdian();
                     ap.deleteForm();
                     System.out.println("\n------ LIST OF APPLICATION ---------");
+                    ap.viewApply();
                     ap.deleteApply();
                     break;
                     
