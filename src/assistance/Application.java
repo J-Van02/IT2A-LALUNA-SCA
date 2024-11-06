@@ -11,22 +11,21 @@ public class Application {
         String fname = sc.nextLine();
         System.out.print("Enter Student Last Name: ");
         String lname = sc.nextLine();
-        System.out.print("Enter Date of Birth (mm/dd/yy): ");
+        System.out.print("Date of Birth (mm/dd/yy): ");
         String db = sc.nextLine();
-        System.out.print("Enter Gender: ");
+        System.out.print("Gender: ");
         String gen = sc.nextLine();
-        System.out.print("Enter Status: ");
+        System.out.print("Status: ");
         String status = sc.nextLine();
-        System.out.print("Enter Address: ");
+        System.out.print("Address: ");
         String add = sc.nextLine();
-        System.out.print("Enter Student Applicant Email: ");
+        System.out.print("Student Applicant Email: ");
         String email =sc.nextLine();
-        System.out.print("Enter Contact Number: ");
-        int cn = sc.nextInt();
-        sc.nextLine();
-        System.out.print("Enter Program/Course Enrolled: ");
+        System.out.print("Contact Number: ");
+        String cn = sc.nextLine();
+        System.out.print("Program/Course Enrolled: ");
         String pce = sc.nextLine();
-        System.out.print("Enter Year Level: ");
+        System.out.print("Year Level: ");
         String yrl = sc.nextLine();
         
         System.out.println("\n------- GUARDIAN INFORMATION --------");
@@ -34,7 +33,7 @@ public class Application {
         String gfname = sc.nextLine();
         System.out.print("Enter Guardian Last Name: ");
         String glname = sc.nextLine();
-        System.out.print("Enter Contact Number: ");
+        System.out.print("Contact Number: ");
         int gcn = sc.nextInt();
        
         String sql = "INSERT INTO Student (s_fname, s_lname, s_db, s_gen, s_status, s_add, s_email, s_cn, s_pce, s_yrl, s_gfname, s_glname, s_gcn)"
@@ -43,16 +42,41 @@ public class Application {
         co.addRecord(sql, fname, lname, db, gen, add, email, cn, pce, yrl, status, gfname, glname, gcn); 
     }
     
- public void viewForm() {
+    public void Apply(){
+        Scanner sc = new Scanner(System.in);
+        config con = new config();
+        Application ap = new Application();
+        AssistanceProgran asp = new AssistanceProgran();
+        
+        ap.viewForm();
+        System.out.print("Select Student ID: ");
+        int id = sc.nextInt();
+        asp.viewProg();
+        System.out.print("Select Program ID: ");
+        int id2 = sc.nextInt();
+        sc.nextLine();
+        System.out.print("Enter Application Date (mm/dd/yy): ");
+        String ad = sc.nextLine();
+        
+        String stat = "Pending..";
+            
+        String sql = "INSERT INTO application (s_id, adprog_id, ap_date, ap_status) VALUES (?, ?, ?, ?)";
+        con.addRecord(sql, id, id2, ad, stat);
+    }
+    
+    public void viewForm() {
     String studentsQuery = "SELECT * FROM Student";
+    String[] studentsHeaders = {"ID", "First Name", "Last Name", "Birth Date", "Gender", "Address", "Status", "Email", "Contact Number", "Program/Course Enrolled", "Year Level"};
+    String[] studentsColumns = {"s_id", "s_fname", "s_lname", "s_db", "s_gen", "s_status", "s_add", "s_email", "s_cn", "s_pce", "s_yrl"};
     
-    String[] studentsHeaders = {
-        "ID", "First Name", "Last Name", "Birth Date", "Gender", "Address", "Status", "Email", "Contact Number", "Program/Course Enrolled", "Year Level"
-    };
+    config co = new config();
+    co.viewRecords(studentsQuery, studentsHeaders, studentsColumns);
+}
     
-    String[] studentsColumns = {
-        "s_id", "s_fname", "s_lname", "s_db", "s_gen", "s_status", "s_add", "s_email", "s_cn", "s_pce", "s_yrl",       
-    };
+    public void viewApply() {
+    String studentsQuery = "SELECT * FROM application";
+    String[] studentsHeaders = {"Application ID", "Student ID", "Application Date", "Status"};
+    String[] studentsColumns = {"ap_id", "s_id", "ap_dare", "ap_Status"};
     
     config co = new config();
     co.viewRecords(studentsQuery, studentsHeaders, studentsColumns);
@@ -88,7 +112,7 @@ public class Application {
         System.out.println("Enter new Status: ");
         String status = sc.nextLine();
 
-        String sqlUpdate = "UPDATE Student SET s_add = ?, s_email = ?, s_cn = ?, s_pce = ?, s_yrl, s_status WHERE s_id = ?"; 
+        String sqlUpdate = "UPDATE Student SET s_add = ?, s_email = ?, s_cn = ?, s_pce = ?, s_yrl, s_status = ? WHERE s_id = ?"; 
         co.updateRecord(sqlUpdate, add, email, cn, pce, yrl, status);
     }
     
@@ -97,11 +121,22 @@ public class Application {
         Scanner sc = new Scanner(System.in);
         config co = new config();
         
-        System.out.println("Enter Student ID to delete: ");
+        System.out.print("Enter Student ID to delete: ");
         int studentId = sc.nextInt();
 
         String sqlDelete = "DELETE FROM Student WHERE s_id = ?"; 
         co.deleteRecord(sqlDelete, studentId);
+    }
+    
+        public void deleteApply() {
+        Scanner sc = new Scanner(System.in);
+        config co = new config();
+        
+        System.out.print("Enter Application ID to delete: ");
+        int id = sc.nextInt();
+
+        String sqlDelete = "DELETE FROM application WHERE ap_id = ?"; 
+        co.deleteRecord(sqlDelete, id);
     }
     
     public void studentForm(){
@@ -113,11 +148,11 @@ public class Application {
         
         do {
             System.out.println("\n------------ STUDENT CASH ASSISTANCE -------------");
-            System.out.println("1. Apply Assistance");
-            System.out.println("2. View Form");
-            System.out.println("3. View Application Result");
+            System.out.println("1. Add Form");
+            System.out.println("2. Apply Program");
+            System.out.println("3. View Form and Application");
             System.out.println("4. Update Form");
-            System.out.println("5. Delete Form");
+            System.out.println("5. Delete Form and Application");
             System.out.println("6. Exit");
             System.out.println("---------------------------------------------------");
             System.out.print("Enter Choice : ");
@@ -130,23 +165,39 @@ public class Application {
                     break;
                     
                 case 2:
+                    AssistanceProgran asp = new AssistanceProgran();
+                    System.out.println("\n ---- Program List ------");
+                    asp.assProg();
+                    ap.Apply();
+                    break;
+                    
+                case 3:
                     System.out.println("\n----- STUDENT INFORMATION ------");
                     ap.viewForm();
                     System.out.println("\n----- GUARDIAN INFORMATION --------");
                     ap.viewGurdian();
-                    break;
-                    
-                case 3:
-                    AssistanceProgran asp = new AssistanceProgran();
-                    asp.viewResult();
+                    System.out.println("\n ------ LIST OF APPLICATION --------");
+                    ap.viewApply();
                     break;
                     
                 case 4:
+                    System.out.println("\n----- STUDENT INFORMATION ------");
+                    ap.viewForm();
+                    System.out.println("\n----- GUARDIAN INFORMATION --------");
+                    ap.viewGurdian();
                     ap.updateForm();
+                    System.out.println("\n------ LIST OF APPLICATION ---------");
+                    ap.Apply();
                     break;
                     
                 case 5:
+                    System.out.println("\n----- STUDENT INFORMATION ------");
+                    ap.viewForm();
+                    System.out.println("\n----- GUARDIAN INFORMATION --------");
+                    ap.viewGurdian();
                     ap.deleteForm();
+                    System.out.println("\n------ LIST OF APPLICATION ---------");
+                    ap.deleteApply();
                     break;
                     
                 case 6:

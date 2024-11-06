@@ -17,7 +17,7 @@ public class AssistanceProgran {
         sc.nextLine();
         System.out.print("Enter Application Deadline (mm/dd/yy): ");
         String ad = sc.nextLine();
-        System.out.print("Enter Disbursement Schedule: ");
+        System.out.print("Enter Disbursement Schedule (mm/dd/yy): ");
         String ds = sc.nextLine();
         
         String sql = "INSERT INTO ass_prog (ass_pname, ass_ec, ass_assm, ass_ad, ass_ds) VALUES (?, ?, ?, ?, ?)";
@@ -27,37 +27,17 @@ public class AssistanceProgran {
     
     public void Application(){
         Scanner sc = new Scanner(System.in);
+        Application ap =  new Application();
         config con = new config();
-        Application ap = new Application();
-        AssistanceProgran asp = new AssistanceProgran();
         
-        ap.viewForm();
-        System.out.print("Select Student ID: ");
+        ap.viewApply();
+        System.out.print("Enter Student ID: ");
         int id = sc.nextInt();
-        asp.viewProg();
-        System.out.print("Select Program ID: ");
-        int id2 = sc.nextInt();
-        sc.nextLine();
-        System.out.print("Enter Application Date (mm/dd/yy): ");
-        String ad = sc.nextLine();
         System.out.print("Enter Status: ");
-        String stat = sc.nextLine();
-        System.out.print("Enter Approval/Denial Date (mm/dd/yy): ");
-        String add = sc.nextLine();
+        String stat = sc.next();
         
-        System.out.print("Is Application Denied? (yes/no): ");
-        String res = sc.nextLine();
-        
-        String rd = "Not Denied";
-        
-        while(res.equalsIgnoreCase("yes")){
-            System.out.print("Enter Reason for Denial: ");
-            rd = sc.nextLine();
-        }
-            
-        String sql = "INSERT INTO application (s_id, adprog_id, ap_date, ap_status, ap_add, ap_rd) VALUES (?, ?, ?, ?, ?, ?)";
-
-        con.addRecord(sql, id, id2, ad, stat, add, rd); 
+        String sqlUpdate = "UPDATE application SET s_status = ? WHERE s_id = ?"; 
+        con.updateRecord(sqlUpdate, stat, id);
     }
     
     public void disbursement(){
@@ -65,9 +45,12 @@ public class AssistanceProgran {
         config con = new config();
         AssistanceProgran asp = new AssistanceProgran();
         
+        asp.viewProg();
+        System.out.print("Enter Program ID: ");
+        int id = sc.nextInt();
         asp.viewApp();
         System.out.print("Enter Application ID: ");
-        int id = sc.nextInt();
+        int id2 = sc.nextInt();
         sc.nextLine();
         System.out.println("Enter Disbursement Date (mm/dd/yy): ");
         String dd = sc.nextLine();
@@ -76,9 +59,9 @@ public class AssistanceProgran {
         System.out.print("Enter Payment Method: ");
         String pm = sc.nextLine();
         
-        String sql = "INSERT INTO dissbursement (ap_id, ds_dd, ds_ad, ds_pm) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO dissbursement (adprog_id, ap_id, ds_dd, ds_ad, ds_pm) VALUES (?, ?, ?, ?, ?, ?)";
 
-        con.addRecord(sql, id, dd, ad, pm); 
+        con.addRecord(sql, id, id2, dd, ad, pm); 
     }
     
     public void viewProg(){
@@ -91,45 +74,35 @@ public class AssistanceProgran {
     }
     
     public void viewApp(){
-        String qry = "SELECT Student.s_id, adprog_id FROM application INNER JOIN Student ON Student.s_id = application.s_id "
-                + "INNER JOIN ass_prog ON ass_prog.adprog_id = application.adprog_id";
-        String[] hdrs = {"Student ID", "Program ID", "Application Date", "Status", "Approval/Denial Date", "Reason for Denial"};
-        String[] clms = {"s_id","adprog_id", "ap_date", "ap_status", "ap_add", "ap_rd"};
+        String qry = "SELECT * FROM application";
+        String[] hdrs = {"Program ID", "Student ID", "Application Date", "Application Status"};
+        String[] clms = {"adprog_id", "s_id", "ap_date", "ap_status"};
         
         config co = new config();
         co.viewRecords(qry, hdrs, clms);
     }
     
+    public void viewDiss(){
+        String qry = "Select * From dissbursement";
+        String[] hdrs = {"Program ID", "Application ID", "Disbursement Date", "Amount Disbursed", "Payment Method"}; 
+        String[] clms = {"adprog_id", "ap_id", "ds_dd", "ds_ad", "ds_pm"};
+   
+    config co = new config();
+    co.viewRecords(qry, hdrs, clms);
+}
+    
    public void viewResult() {
-    String qry = "SELECT Student.s_lname, ass_prog.ass_pname, ass_prog.ass_assm, ass_prog.ass_ds, application.ap_status, dissbursement.ds_ad "
+    String qry = "SELECT Student.s_lname, ass_prog.ass_pname, ass_prog.ass_assm, ass_prog.ass_ds, application.ap_status, dissbursement.ds_ad, dissbursement.ds_pm "
                 + "FROM report "
                 + "INNER JOIN Student ON Student.s_lname = report.s_lname "
                 + "INNER JOIN ass_prog ON ass_prog.ass_pname = report.ass_pname AND ass_prog.ass_assm = report.ass_assm AND ass_prog.ass_ds = report.ass_ds "
                 + "INNER JOIN application ON application.ap_status = report.ap_status "
                 + "INNER JOIN dissbursement ON dissbursement.ds_ad = report.ds_ad";
     
-    String[] hdrs = {
-        "Student Name", 
-        "Program Name", 
-        "Assistant Amount", 
-        "Disbursement Schedule", 
-        "Status", 
-        "Disbursement Amount" 
-    };
-    
-    String[] clms = {
-        "s_lname", 
-        "ass_pname", 
-        "ass_assm", 
-        "ass_ds", 
-        "ap_status", 
-        "ds_ad"
-    };
-    
-    // Assuming config is a utility class that handles database connection and display logic
+    String[] hdrs = {"Student Name", "Program Name", "Assistant Amount", "Disbursement Schedule", "Application Status", "Disbursement Amount", "Payment Method"}; 
+    String[] clms = {"s_lname", "ass_pname", "ass_assm", "ass_ds", "ap_status", "ds_ad", "ds_pm"};
+   
     config co = new config();
-    
-    // Call to viewRecords method to display the data
     co.viewRecords(qry, hdrs, clms);
 }
     
@@ -209,7 +182,7 @@ public class AssistanceProgran {
         boolean exit = true;
         
         do {
-            System.out.println("------------ STUDENT CASH ASSISTANCE -------------");
+            System.out.println("\n------------ STUDENT CASH ASSISTANCE -------------");
             System.out.println("1. Add Assistance Program");
             System.out.println("2. Add Application");
             System.out.println("3. Add Disbursement");
@@ -218,7 +191,7 @@ public class AssistanceProgran {
             System.out.println("6. Delete Record");
             System.out.println("7. Exit");
             System.out.println("---------------------------------------------------");
-            System.out.println("Enter Choice : ");
+            System.out.print("Enter Choice : ");
             choice = sc.nextInt();
 
             switch (choice) {
@@ -236,10 +209,6 @@ public class AssistanceProgran {
                     break;
                     
                 case 4:
-                    System.out.println("\nList Program");
-                    asp.viewProg();
-                    System.out.println("\nList Application");
-                    asp.viewApp();
                     System.out.println("\nResult");
                     asp.viewResult();
                     break;
