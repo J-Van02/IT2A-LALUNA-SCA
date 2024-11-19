@@ -90,9 +90,9 @@ public class Application {
 }
     
     public void viewApply() {
-    String studentsQuery = "SELECT * FROM application";
-    String[] studentsHeaders = {"Application ID", "Student ID", "Application Date", "Status"};
-    String[] studentsColumns = {"ap_id", "s_id", "ap_date", "ap_Status"};
+    String studentsQuery = "SELECT application.ap_id, Student.s_fname, application.ap_date, application.ap_status FROM application";
+    String[] studentsHeaders = {"Application ID", "Student Name", "Application Date", "Status"};
+    String[] studentsColumns = {"ap_id", "s_id", "s_fname", "ap_Status"};
     
     config co = new config();
     co.viewRecords(studentsQuery, studentsHeaders, studentsColumns);
@@ -185,7 +185,7 @@ public class Application {
             System.out.println("\n------------ STUDENT CASH ASSISTANCE -------------");
             System.out.println("1. Add Form");
             System.out.println("2. Apply Program");
-            System.out.println("3. View Form and Application");
+            System.out.println("3. View Application");
             System.out.println("4. Update Form");
             System.out.println("5. Delete Form and Application");
             System.out.println("6. Exit");
@@ -204,10 +204,6 @@ public class Application {
                     break;
                     
                 case 3:
-                    System.out.println("\n----- STUDENT INFORMATION ------");
-                    ap.viewForm();
-                    System.out.println("\n----- GUARDIAN INFORMATION --------");
-                    ap.viewGurdian();
                     System.out.println("\n ------ LIST OF APPLICATION --------");
                     ap.viewApply();
                     break;

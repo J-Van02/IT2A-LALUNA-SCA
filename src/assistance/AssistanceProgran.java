@@ -45,31 +45,20 @@ public class AssistanceProgran {
         con.updateRecord(sqlUpdate, stat, id);
     }
     
-    public void disbursement(){
+    public void release(){
         Scanner sc = new Scanner(System.in);
         config con = new config();
         AssistanceProgran asp = new AssistanceProgran();
         
         System.out.println("\n ---- LIST OF PROGRAM ----");
         asp.viewProg();
-        System.out.print("Enter Program ID: ");
-        int id = sc.nextInt();
+        System.out.print("Enter Program Name: ");
+        String pname = sc.nextLine();
         
-        while((con.getSingleValue("SELECT adprog_id FROM ass_prog WHERE adprog_id = ?", id)) == 0){
-        System.out.println("Selected ID doesn't exist!");
-        System.out.print("Enter Program ID again: ");
-        id = sc.nextInt();
-    }
         System.out.println("\n---- LIST OF APPLICANT -----");
         asp.viewApp();
-        System.out.print("Enter Application ID: ");
-        int id2 = sc.nextInt();
-        
-        while((con.getSingleValue("SELECT ap_id FROM application WHERE ap_id = ?", id2)) == 0){
-        System.out.println("Selected ID doesn't exist!");
-        System.out.print("Enter Application ID again: ");
-        id = sc.nextInt();
-    }
+        System.out.print("Enter Applicant Name: ");
+        String aname = sc.nextLine();
         
         sc.nextLine();
         System.out.print("Enter Release Date (mm/dd/yy): ");
@@ -80,9 +69,9 @@ public class AssistanceProgran {
         System.out.print("Enter Payment Method: ");
         String pm = sc.nextLine();
         
-        String sql = "INSERT INTO dissbursement (adprog_id, ap_id, ds_dd, ds_ad, ds_pm) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO release (s_fname, ass_pname, ds_dd, ds_ad, ds_pm) VALUES (?, ?, ?, ?, ?)";
 
-        con.addRecord(sql, id, id2, dd, ad, pm); 
+        con.addRecord(sql, pname, aname, dd, ad, pm); 
     }
     
     public void viewProg(){
@@ -103,29 +92,15 @@ public class AssistanceProgran {
         co.viewRecords(qry, hdrs, clms);
     }
     
-    public void viewDiss(){
-        String qry = "Select * From dissbursement";
-        String[] hdrs = {"Program ID", "Application ID", "Release Date", "Amount Release", "Payment Method"}; 
-        String[] clms = {"adprog_id", "ap_id", "ds_dd", "ds_ad", "ds_pm"};
+    public void viewRelease(){
+        String qry = "Select * From release";
+        String[] hdrs = {"Applicant Name", "Program Name", "Release Date", "Amount Release", "Payment Method"}; 
+        String[] clms = {"s_fname", "ass_pname", "ds_dd", "ds_ad", "ds_pm"};
    
     config co = new config();
     co.viewRecords(qry, hdrs, clms);
 }
     
-   public void viewResult() {
-    String qry = "SELECT Student.s_lname, ass_prog.ass_pname, ass_prog.ass_assm, ass_prog.ass_ds, application.ap_status, dissbursement.ds_ad, dissbursement.ds_pm "
-                + "FROM report "
-                + "INNER JOIN Student ON Student.s_lname = report.s_lname "
-                + "INNER JOIN ass_prog ON ass_prog.ass_pname = report.ass_pname AND ass_prog.ass_assm = report.ass_assm AND ass_prog.ass_ds = report.ass_ds "
-                + "INNER JOIN application ON application.ap_status = report.ap_status "
-                + "INNER JOIN dissbursement ON dissbursement.ds_ad = report.ds_ad";
-    
-    String[] hdrs = {"Student Name", "Program Name", "Assistant Amount", "Release Schedule", "Application Status", "Release Amount", "Payment Method"}; 
-    String[] clms = {"s_lname", "ass_pname", "ass_assm", "ass_ds", "ap_status", "ds_ad", "ds_pm"};
-   
-    config co = new config();
-    co.viewRecords(qry, hdrs, clms);
-}
     
     public void updateProg(){
         Scanner sc = new Scanner(System.in);
@@ -183,20 +158,20 @@ public class AssistanceProgran {
         con.deleteRecord(sql, id);
     }
         
-    public void deleteDis(){
+    public void deleteRelease(){
         Scanner sc = new Scanner(System.in);
         config con = new config();
         
-        System.out.print("Enter disbursement ID to Delete: ");
+        System.out.print("Enter Release ID to Delete: ");
         int id = sc.nextInt();
         
-        while((con.getSingleValue("SELECT dis_id FROM disbursement WHERE dis_id = ?", id)) == 0){
+        while((con.getSingleValue("SELECT ds_id FROM release WHERE ds_id = ?", id)) == 0){
         System.out.println("Selected ID doesn't exist!");
-        System.out.print("Enter Disbursement ID again: ");
+        System.out.print("Enter Release ID again: ");
         id = sc.nextInt();
     }
 
-        String sql = "DELETE FROM disbursement WHERE ap_id = ?";
+        String sql = "DELETE FROM release WHERE ds_id = ?";
         con.deleteRecord(sql, id);
     }
     
@@ -213,7 +188,7 @@ public class AssistanceProgran {
             System.out.println("1. Add Assistance Program");
             System.out.println("2. Student Application");
             System.out.println("3. Add Release");
-            System.out.println("4. View Record and Result");
+            System.out.println("4. View Record");
             System.out.println("5. Update Program");
             System.out.println("6. Delete Record");
             System.out.println("7. Exit");
@@ -234,7 +209,7 @@ public class AssistanceProgran {
                     break;
                     
                 case 3:
-                    asp.disbursement();
+                    asp.release();
                     break;
                     
                 case 4:
@@ -242,10 +217,9 @@ public class AssistanceProgran {
                     asp.viewProg();
                     System.out.println("\n------ LIST OF APPLICATION -------");
                     asp.viewApp();
-                    System.out.println("\n-------- LIST OF DISBURSEMENT ---------");
-                    asp.viewDiss();
-                    System.out.println("\n---- RESULT -----");
-                    asp.viewResult();
+                    System.out.println("\n-------- LIST OF RELEASE ---------");
+                    asp.viewRelease();
+                   
                     break;
                     
                 case 5:
@@ -271,12 +245,12 @@ public class AssistanceProgran {
                         break;
                     }
                     
-                    System.out.println("\n-------- LIST OF DISBURSEMENT ---------");
-                    asp.viewDiss();
+                    System.out.println("\n-------- LIST OF RELEASE ---------");
+                    asp.viewRelease();
                     System.out.print("Delete Disbursement? (yes/no): ");
                     String res3 = sc.next();
                     while(res3.equalsIgnoreCase("yes")){
-                        asp.deleteDis();
+                        asp.deleteRelease();
                         break;
                     }
                     break;
