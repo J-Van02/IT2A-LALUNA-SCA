@@ -48,6 +48,7 @@ public class AssistanceProgran {
     public void release(){
         Scanner sc = new Scanner(System.in);
         config con = new config();
+        Application ap = new Application();
         AssistanceProgran asp = new AssistanceProgran();
         
         System.out.println("\n ---- LIST OF PROGRAM ----");
@@ -56,11 +57,9 @@ public class AssistanceProgran {
         String pname = sc.nextLine();
         
         System.out.println("\n---- LIST OF APPLICANT -----");
-        asp.viewApp();
+        ap.viewApply();
         System.out.print("Enter Applicant Name: ");
         String aname = sc.nextLine();
-        
-        sc.nextLine();
         System.out.print("Enter Release Date (mm/dd/yy): ");
         String dd = sc.nextLine();
         System.out.print("Enter Amount Release: ");
@@ -83,18 +82,9 @@ public class AssistanceProgran {
         co.viewRecords(qry, hdrs, clms);
     }
     
-    public void viewApp(){
-        String qry = "SELECT * FROM application";
-        String[] hdrs = {"Application ID", "Program ID", "Student ID", "Application Date", "Application Status"};
-        String[] clms = {"ap_id","adprog_id", "s_id", "ap_date", "ap_status"};
-        
-        config co = new config();
-        co.viewRecords(qry, hdrs, clms);
-    }
-    
     public void viewRelease(){
         String qry = "Select * From release";
-        String[] hdrs = {"Applicant Name", "Program Name", "Release Date", "Amount Release", "Payment Method"}; 
+        String[] hdrs = {"Program Name", "Applicant Name", "Release Date", "Amount Release", "Payment Method"}; 
         String[] clms = {"s_fname", "ass_pname", "ds_dd", "ds_ad", "ds_pm"};
    
     config co = new config();
@@ -114,13 +104,13 @@ public class AssistanceProgran {
         System.out.print("Enter Program ID again: ");
         id = sc.nextInt();
     }
-        
+        sc.nextLine();
         System.out.print("Enter new Application Deadline (mm/dd/yy): ");
         String ad = sc.nextLine();
-        System.out.print("Enter new Disbursement Schedule: ");
+        System.out.print("Enter new Release Schedule: ");
         String ds = sc.nextLine();
         
-        String sql = "UPDATE ass_prog SET ss_ad, ass_ds WHERE adprog_id = ?";
+        String sql = "UPDATE ass_prog SET ass_ad =?, ass_ds = ?  WHERE adprog_id = ?";
         con.updateRecord(sql, ad, ds, id);
     }
     
@@ -216,14 +206,18 @@ public class AssistanceProgran {
                     System.out.println("\n ----- LIST OF PROGRAM -------");
                     asp.viewProg();
                     System.out.println("\n------ LIST OF APPLICATION -------");
-                    asp.viewApp();
+                    ap.viewApply();
                     System.out.println("\n-------- LIST OF RELEASE ---------");
                     asp.viewRelease();
                    
                     break;
                     
                 case 5:
+                    System.out.println("\n ----- LIST OF PROGRAM -------");
+                    asp.viewProg();
                     asp.updateProg();
+                    System.out.println("\n ----- LIST OF PROGRAM -------");
+                    asp.viewProg();
                     break;
                     
                 case 6:
@@ -237,7 +231,7 @@ public class AssistanceProgran {
                     }
                     
                     System.out.println("\n------ LIST OF APPLICATION -------");
-                    asp.viewApp();
+                    ap.viewApply();
                     System.out.print("Delete Application (yes/no): ");
                     String res2 = sc.next();
                     while(res2.equalsIgnoreCase("yes")){

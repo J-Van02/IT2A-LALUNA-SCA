@@ -90,9 +90,9 @@ public class Application {
 }
     
     public void viewApply() {
-    String studentsQuery = "SELECT application.ap_id, Student.s_fname, application.ap_date, application.ap_status FROM application";
+    String studentsQuery = "SELECT application.ap_id, Student.s_fname, application.ap_date, application.ap_status FROM application INNER JOIN Student ON Student.s_id = application.s_id";
     String[] studentsHeaders = {"Application ID", "Student Name", "Application Date", "Status"};
-    String[] studentsColumns = {"ap_id", "s_id", "s_fname", "ap_Status"};
+    String[] studentsColumns = {"ap_id", "s_fname", "ap_date", "ap_status"};
     
     config co = new config();
     co.viewRecords(studentsQuery, studentsHeaders, studentsColumns);
@@ -132,11 +132,11 @@ public class Application {
         String pce = sc.nextLine();
         System.out.print("Enter new Year Level: ");
         String yrl = sc.nextLine();
-        System.out.println("Enter new Status: ");
+        System.out.print("Enter new Status: ");
         String status = sc.nextLine();
 
-        String sqlUpdate = "UPDATE Student SET s_add = ?, s_email = ?, s_cn = ?, s_pce = ?, s_yrl, s_status = ? WHERE s_id = ?"; 
-        co.updateRecord(sqlUpdate, add, email, cn, pce, yrl, status);
+        String sqlUpdate = "UPDATE Student SET s_add = ?, s_email = ?, s_cn = ?, s_pce = ?, s_yrl = ?, s_status = ? WHERE s_id = ?"; 
+        co.updateRecord(sqlUpdate, add, email, cn, pce, yrl, status, id);
     }
     
     
@@ -211,11 +211,9 @@ public class Application {
                 case 4:
                     System.out.println("\n----- STUDENT INFORMATION ------");
                     ap.viewForm();
-                    System.out.println("\n----- GUARDIAN INFORMATION --------");
-                    ap.viewGurdian();
                     ap.updateForm();
-                    System.out.println("\n------ LIST OF APPLICATION ---------");
-                    ap.Apply();
+                    System.out.println("\n----- STUDENT INFORMATION ------");
+                    ap.viewForm();
                     break;
                     
                 case 5:
@@ -224,9 +222,10 @@ public class Application {
                     System.out.println("\n----- GUARDIAN INFORMATION --------");
                     ap.viewGurdian();
                     ap.deleteForm();
-                    System.out.println("\n------ LIST OF APPLICATION ---------");
-                    ap.viewApply();
-                    ap.deleteApply();
+                    System.out.println("\n----- STUDENT INFORMATION ------");
+                    ap.viewForm();
+                    System.out.println("\n----- GUARDIAN INFORMATION --------");
+                    ap.viewGurdian();
                     break;
                     
                 case 6:
