@@ -12,8 +12,18 @@ public class AssistanceProgran {
         String pname = sc.nextLine();
         System.out.print("Enter Eligibility Criteria: ");
         String ec = sc.nextLine();
-        System.out.print("Enter Assistance Amount: ");
-        int assm = sc.nextInt();
+        
+        while(true){
+            System.out.print("Assistance Amount: ");
+            if(sc.hasnextInt){
+                assm = sc.nextInt();
+                break;
+            }else{
+                System.out.print("Invalid input, Please enter a valid amount!");
+                sc.next();
+            }
+        }
+        
         sc.nextLine();
         System.out.print("Enter Application Deadline (mm/dd/yy): ");
         String ad = sc.nextLine();
